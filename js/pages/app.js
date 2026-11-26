@@ -90,6 +90,39 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (modal) modal.remove();
     }
   });
+
+  // Buscar el id del usuario logueado
+  const getUserId = async () => {
+    for (let id = 1; id <= 100; id++) {
+      const res = await fetch(`http://localhost:8080/api/users/${id}`, {
+        headers: PostService.getHeaders(),
+      });
+      if (!res.ok) continue;
+      const u = await res.json();
+      if (u.username === user) return u.id;
+    }
+    return null;
+  };
+
+  // Subir un nuevo post
+  document.addEventListener("submit", async (e) => {
+    if (e.target.id === "create-post-form") {
+      e.preventDefault();
+      const title = document.getElementById("post-title").value;
+      const content = document.getElementById("post-content").value;
+      const userId = await getUserId();
+
+      try {
+        await PostService.create(title, content, userId);
+        const modal = document.getElementById("post-modal");
+        if (modal) modal.remove();
+        loadPosts();
+      } catch (error) {
+        alert(error.message);
+      }
+    }
+  });
+
    loadPosts();
 });
 
