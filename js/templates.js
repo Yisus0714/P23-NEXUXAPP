@@ -54,7 +54,7 @@ export const postCardTemplate = (post) => `
         </div>
     </div>
     <div class="post-content">
-        <div class="post-title">${post.title}}</div>
+        <div class="post-title">${post.title}</div>
         <p>${post.content}</p>
     </div>
     <div class="post-actions">

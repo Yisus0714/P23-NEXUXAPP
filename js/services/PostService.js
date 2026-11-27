@@ -63,7 +63,7 @@ class PostService {
         const response = await fetch(`${BASE_URL}/posts`,{
             headers:this.getHeaders()
         });
-        return this.handleResponse(res,'No se logro obtener las publicaciones.');
+        return this.handleResponse(response,'No se logro obtener las publicaciones.');
     }
 
     /**
@@ -82,7 +82,7 @@ class PostService {
         const response = await fetch(`${BASE_URL}/posts`,{
             method:'POST',
             headers:this.getHeaders(),
-            body:JSON.stringify({tittle,content})
+            body:JSON.stringify({title,content})
         });
 
         return this.handleResponse(response,"No se logro crear eol post");

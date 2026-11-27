@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // TODO: 2. Llamar a renderUser()
     renderUser()
     // TODO: 3. Llamar a setupEventListeners()
+    setupEventListeners()
     // TODO: 4. Llamar a loadPosts()
     loadPosts()
 });
@@ -36,7 +37,7 @@ function renderUser() {
     // TODO: 1. Obtener el usuario con AuthService.getUser()
     // TODO: 2. Inyectar composerTemplate(user) en composer.innerHTML
     const user = AuthService.getUser();
-    composer.innerHTML(composerTemplate(user))
+    composer.innerHTML= composerTemplate(user)
 }
 
 /**
@@ -47,14 +48,23 @@ function setupEventListeners() {
     //          - AuthService.logout()
     //          - Redirigir a 'login.html'
     //
+     logoutBtn.addEventListener('click',()=>{
+        AuthService.logout();
+        window.location.href = 'login.html'
+    })
     // TODO: 2. Escuchar 'click' en composer (delegación de eventos: el trigger se creó con innerHTML):
     //          - Si e.target.closest('#open-post-modal') existe, llamar a openModal()
     //
+    composer.addEventListener('click',(e)=>{
+        openModal();
+    })
     // TODO: 3. Escuchar 'click' en modalRoot (el modal tampoco existe al cargar la página):
     //          - Si se hizo clic en la X (e.target.closest('.close-modal'))
     //            o fuera del modal (e.target.classList.contains('modal-overlay')), llamar a closeModal()
     //
-    // TODO: 4. Escuchar 'submit' en modalRoot y pasarle la función createPost
+    // TODO: 4. Escuchar 'submit' en modalRoot y pasarle la función createPost3
+    modalRoot.addEventListener('submit',createPost)
+   
 }
 
 /**
@@ -77,14 +87,15 @@ async function loadPosts() {
             postsContainer.innerHTML='<p style ="text-align:center">No hay publicaciones aun</p>'
             return;
         }
-        posts.array.forEach(post => {
+    
+        posts.forEach(post => {
             const card = document.createElement('div')
             card.className='post-card fade-in';
             card.innerHTML=postCardTemplate(post);
             postsContainer.appendChild(card);
         });
     }catch(error){
-        this.handleError(error);
+        handleError(error);
     }
 }
 
@@ -93,6 +104,7 @@ async function loadPosts() {
  */
 function openModal() {
     // TODO: Inyectar postModalTemplate() en modalRoot.innerHTML
+    modalRoot.innerHTML= postModalTemplate();
 }
 
 /**
@@ -100,6 +112,7 @@ function openModal() {
  */
 function closeModal() {
     // TODO: Vaciar modalRoot.innerHTML
+    modalRoot.innerHTML=''
 }
 
 /**
@@ -116,6 +129,20 @@ async function createPost(e) {
     //          - closeModal()
     //          - loadPosts() para ver el post nuevo
     // TODO: 5. En el catch, llamar a handleError(error)
+    if (e.target.id !== "create-post-form") return; 
+      e.preventDefault();
+      const title = document.getElementById("post-title").value.trim();
+      const content = document.getElementById("post-content").value.trim();
+
+      try {
+        await PostService.create(title, content);
+       closeModal();
+       loadPosts();
+      } catch (error) {
+       handleError(error);
+      }
+    
+  
 }
 
 /**
@@ -129,3 +156,5 @@ function handleError(error) {
         window.location.href = 'login.html';
     }
 }
+
+
